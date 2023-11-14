@@ -1,0 +1,158 @@
+{% extends 'admin/layouts/apps.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<!--begin::Content wrapper-->
+<div class="d-flex flex-column flex-column-fluid">
+    {% include 'admin/layouts/breadcrumbs.html' %}
+    <!--begin::Content-->
+    <div id="kt_app_content" class="app-content flex-column-fluid">
+        <!--begin::Content container-->
+        <div id="kt_app_content_container" class="app-container container-xxl">
+            <!--begin::Form-->
+            <form id="create-or-update-company-profile-form" class="form d-flex flex-column flex-lg-row" method="POST"
+                enctype="multipart/form-data" action="{% if instance.id is not None %}{% url 'seo:seo.management.update' instance.id %}{% else %}{% url 'seo:seo.management.create' %}{% endif %}">
+
+                {% csrf_token %}
+                <input type="hidden" name="instance_id" value="{{instance.id}}" />
+                <input type="text" name="err_message" value="{{ err_message }}" id="err_message" style="display: none;" />
+                <!--begin::Aside column-->
+                <!--begin::Main column-->
+                <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+                    <!--begin::Tab content-->
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="create-or-update-user-general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
+                                <div class="card card-flush py-4">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Seo Management</h2>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-0 ">
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Meta Title</label>
+                                                    <input type="text" name="meta_title" value="{{instance.meta_title}}"
+                                                        class="form-control mb-2" placeholder="Enter Meta Title" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="fv-row w-100 flex-md-root">
+                                            <div class="mb-5 fv-row">
+                                                <label class="required form-label">Page</label>
+                                                <select class="form-select mb-2" name="seo_page" data-handle-select-change="seo_page" data-control="select2"  data-hide-search="false" data-placeholder="Select display on ">
+                                                    <option ></option>
+                                                        {% for seo_page in seo_page %}
+                                                            <option {% if instance.seo_page|stringformat:'s' == seo_page.0|stringformat:'s' %} selected  {% endif %} value="{{seo_page.0}}"  >{{seo_page.1}}</option>
+                                                        {% endfor %}
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Meta Description</label>
+                                                    <textarea class="form-control mb-2" rows="4" id="notification_title" name="meta_description"
+                                                        placeholder="Enter Meta Description">{{instance.meta_description}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Meta Keywords</label>
+                                                    <span style="color: red;padding: 10px;">(seperated by "," )</span>
+                                                    <textarea class="form-control mb-2" rows="4" id="notification_title" name="meta_keyword"
+                                                        placeholder="Enter Meta Keywords">{{instance.meta_keyword}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Image Title</label>
+                                                    <input type="text" name="meta_image_title" value="{{instance.meta_image_title}}"
+                                                        class="form-control mb-2" placeholder="Enter Image Title" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">OG Image</label><br>
+                                                    <span style="color: red;padding: 10px;">Only *.png, *.jpg, and *.jpeg image files under 1MB in size are accepted.</span>
+                                                    <input type="file" name="og_image" id="logo" accept="image/*"
+                                                        class="form-control mb-2" onchange="previewImage(event)" />
+                                                </div>
+                                            </div>
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <img id="logo-preview"
+                                                        src="{% if instance.og_image %}{{ instance.og_image.url }}{% else %}{% static 'assets/media/svg/files/blank-image.svg' %}{% endif %}"
+                                                        alt="Logo Preview" class="img-fluid" style="width: 160px;
+                                                height: 70px;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+                            <!--end::Tab pane-->
+                        </div>
+
+                        
+                        <!--end::Tab content-->
+                        <div class="d-flex justify-content-end" style='padding-top: 20px;'>
+                            <!--begin::Button-->
+                            <a href="{% url 'seo:seo-management-view.index' %}" id="kt_ecommerce_add_product_cancel"
+                                class="btn btn-light me-5">Cancel</a>
+                            <!--end::Button-->
+                            <!--begin::Button-->
+                            <button type="submit" id="create-or-update-company-profile-submit" class="btn btn-primary">
+                                <span class="indicator-label" >Save </span>
+                                </button>
+                                <button type="button" id="banner-loader-text" class="indicator-progress btn btn-primary">
+                                <span class="">Please wait...
+                                <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                            </button>
+                            <!--end::Button-->
+                        </div>
+                    </div>
+                    <!--end::Main column-->
+            </form>
+            <!--end::Form-->
+        </div>
+        <!--end::Content container-->
+    </div>
+    <!--end::Content-->
+</div>
+<!--end::Content wrapper-->
+{% endblock content %}
+{% block script %}
+
+<script>
+    // Check if err_message input field has a non-empty value
+    var errMessageInput = document.getElementById('err_message');
+    if (errMessageInput && errMessageInput.value.trim() !== '') {
+        // Display a toastr error message for 3 seconds
+        toastr.error(errMessageInput.value, '', { timeOut: 1000 });
+    }
+</script>
+
+<script
+    src="{% static 'assets/js/custom/pages/home-page/seo-managenet/create-or-update-seo.js' %}?time={% now 'h:i:s' %}"></script>
+
+
+{% endblock script %}
+
+

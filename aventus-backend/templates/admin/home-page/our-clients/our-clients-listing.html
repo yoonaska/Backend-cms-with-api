@@ -1,0 +1,288 @@
+{% extends 'admin/layouts/apps.html' %}
+{% load static %}
+
+
+{% block content %}
+<style>
+
+      .clear-both{clear:both;}
+      
+      h1{
+        color: #000;
+        font-weight: 300;
+        margin: 0;
+        padding: 30px;
+        font-weight: 600;
+        text-align: left;
+      }
+      
+      .block{
+        background-color: rgba(255, 255, 255, 0.5);
+        margin: 0 30px;
+        width: calc(100% - 60px);
+        margin:0 auto;
+        margin-bottom: 30px;
+        padding: 10px;
+        text-align: center;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        border: 1px solid #e3e3e3;
+      }
+      
+      label.button{
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        background-color: #FFFFFF;
+        border: 1px solid #6C6C6C;
+        color: #6C6C6C;
+        padding: 5px 10px;
+        margin: 5px 0;
+        display: inline-block;
+        -webkit-transition: all 200ms linear;
+        -moz-transition: all 200ms linear;
+        -ms-transition: all 200ms linear;
+        -o-transition: all 200ms linear;
+        transition: all 200ms linear;
+      }
+      
+      label.button:hover{
+        background-color:#F0F0F0;
+        cursor: pointer;
+        -webkit-transition: all 200ms linear;
+        -moz-transition: all 200ms linear;
+        -ms-transition: all 200ms linear;
+        -o-transition: all 200ms linear;
+        transition: all 200ms linear;
+      }
+      
+      input#images{display: none;}
+      
+      #multiple-file-preview{border-top: 1px solid rgba(0, 0, 0, 0.11); margin-top: 10px; padding: 10px;}
+      
+      #sortable {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        min-height: 300px;
+      }
+      
+        #sortable li {
+          margin: 3px 13px 13px 0;
+          float: left;
+          width: 140px;
+          height: 140px;
+          text-align: center;
+          position: relative;
+          background-color: #f5f5f5;
+          cursor: grab;
+          box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+      
+          #sortable li, #sortable li img
+          {
+                -webkit-border-radius: 4px;
+                -moz-border-radius: 4px;
+                border-radius: 4px;
+          }
+          #sortable li img{
+            width: 100%;
+            height: 120px;
+            object-fit: contain;
+          }
+      
+          #sortable li div.order-number{
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            background-color: #2B91E3;
+            color: #FFFFFF;
+            font-size: 12px;
+            -webkit-border-radius: 20px;
+            -moz-border-radius: 20px;
+            border-radius: 20px;
+          }
+          /* Remove square bullet points */
+#sortable {
+    list-style: none;
+    padding: 0;
+}
+
+/* Style the list item and its contents */
+.ui-state-default {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px; /* Add some spacing around the list item */
+}
+
+.image-container {
+    flex-grow: 1;
+    height: 141px;
+    margin: 0 auto;
+}
+
+.ui-state-default {
+    display: flex;
+    flex-direction: column; /* Stack contents vertically */
+    align-items: flex-start; /* Align contents to the left */
+    padding: 5px; /* Add some spacing around the list item */
+}
+
+/* Style the delete button */
+.delete-button {
+    background-color: #ed5656;
+    border: none;
+    padding: 2px 5px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    line-height: 20px;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+}
+.delete-button i{
+    color: #fff;
+}
+
+button{
+    padding: 11px;
+    border-radius: 31px;
+}
+
+#sortable li, #sortable li img {
+    border-radius:12px;
+}
+label.button.btn-upload,
+button.btn-save,
+button.btn-remove{
+    text-align: center;
+    width: 140px;
+    height: 38px;
+    font-size: 14px;
+    padding: 0;
+    line-height: 36px;
+    font-weight: 600;
+    background-color: #27c3f1;
+    color: #fff;
+    border: 1px solid #26b2db;
+}
+button.btn-save{
+    margin: 0 5px;
+    border-radius: 4px;
+    background-color: #0067b8;
+    border-color: #0067b8;
+}
+button.btn-remove{
+    border-radius: 4px;
+    background-color: #d93232;
+    border-color: #d93232;
+}
+#loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Ensure it's above other content */
+}
+
+#loading-spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3); /* Light border */
+  border-top: 4px solid #3498db; /* Blue spinner */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite; /* Spin animation */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+
+<div class="d-flex flex-column flex-column-fluid">
+  <!-- Include your breadcrumbs or other content here -->
+  <!-- ... -->
+  <!--begin::Content-->
+  <div id="kt_app_content" class="app-content flex-column-fluid">
+    <!--begin::Content container-->
+    <div id="kt_app_content_container" class="app-container container-xxl">
+    </div>
+    <h1>Our Clients</h1>
+    <div class="block">
+      <div class="text-end">
+        <label class="button btn-upload" for="images">Upload Images</label>
+        <input type="file" id="images" multiple="multiple" />
+
+        <button id="save-button" class="btn-save" data-href="{% url 'home:our.clients-view.index' %}">Save</button>
+        <button class="btn-remove">Remove All</button>
+      </div>
+
+      <div id="multiple-file-preview">
+        <ul id="sortable">
+          <div class="clear-both"></div>
+        </ul>
+      </div>
+    </div>
+
+    <div id="loading-overlay" style="display: none;">
+      <div id="loading-spinner"></div>
+  </div>
+
+  </div>
+
+
+  <div class='initial-image'>
+    {% for initialImage in instance %}
+    <input type="hidden" data-order-id='{{initialImage.order}}' data-url='{{initialImage.client_logo.url}}'
+      data-id='{{initialImage.id}}'>
+    {% endfor %}
+    <div>
+      <!--end::Content container-->
+    </div>
+    <!--end::Content-->
+  </div>
+
+
+
+
+
+{% endblock content %}
+
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include jQuery UI -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        var api_config= {
+            'datatable'                 : "{% url 'home:load.our.clients.datatable' %}",
+            'csrfmiddlewaretoken'       : '{{ csrf_token }}',
+            'active_inactive_company'   : "{% url 'home:active.or.inactive.our-clients' %}",
+            'edit_url'                  : "{% url 'home:our.clients.update' '0' %}",
+            'delete_records'            : "{% url 'home:our.clients.records.destroy' %}",
+            'image-order'               : "{% url 'home:update_image_order' %}",
+            'delete-image'              : "{% url 'home:delete_image_order' %}",
+        };
+    
+    </script>
+    <script src="{% static 'assets/js/custom/pages/home-page/our-clients/our-clients-datatable.js' %}?time={% now 'h:i:s' %}"></script>
+
+{% endblock script %}
+
+
+

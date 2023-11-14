@@ -1,0 +1,188 @@
+{% extends 'admin/layouts/apps.html' %}
+{% load static %}
+
+
+{% block content %}
+	<!--begin::Content wrapper-->
+    <div class="d-flex flex-column flex-column-fluid">
+
+
+
+        {% include 'admin/layouts/breadcrumbs.html' %}
+
+
+
+
+        <!--begin::Content-->
+        <div id="kt_app_content" class="app-content flex-column-fluid">
+            <!--begin::Content container-->
+            <div id="kt_app_content_container" class="app-container container-xxl">
+                <!--begin::Form-->
+                <form id="create-or-update-vehicle-form" class="form d-flex flex-column flex-lg-row"  method="POST" enctype="multipart/form-data"  action="{% url 'master:manufactures.create' %}">
+                    {% csrf_token %}
+
+                    <input type="hidden" name="category_id" value="{{manufactures.id}}" />
+
+
+                    <!--end::Aside column-->
+                    <!--begin::Main column-->
+                    <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+
+                        <!--begin::Tab content-->
+                        <div class="tab-content">
+                            <!--begin::Tab pane-->
+                            <div class="tab-pane fade show active" id="create-or-update-admin-general" role="tab-panel">
+                                <div class="d-flex flex-column gap-7 gap-lg-10">
+
+
+                                    <div class="card card-flush py-4">
+
+                                        <div class="card-header">
+                                            <div class="card-title">
+                                                <h2>Manufacture details</h2>
+                                            </div>
+                                        </div>
+
+                                        <div class="card-body pt-0 ">
+
+
+                                            <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                                <div class="fv-row w-100 flex-md-root">
+                                                    <div class="mb-5 fv-row">
+                                                        <label class="required form-label">Manufacturer Id</label>
+                                                        <input type="text" name="manufacturer_id" value="{{manufactures.manufacturer_id}}" class="form-control mb-2"  placeholder="Enter Manufacturer Id" />
+                                                    </div>
+                                                </div>
+                                                <div class="fv-row w-100 flex-md-root">
+                                                    <div class="mb-5 fv-row">
+                                                        <label class="required form-label">Manufacturer Name</label>
+                                                        <input type="text" name="manufacture_name" value="{{manufactures.manufacture_name}}" class="form-control mb-2"  placeholder="Enter Manufacturer Name" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                                <div class="fv-row w-100 flex-md-root">
+                                                    <div class="mb-5 fv-row">
+                                                        <label class="required form-label">Email</label>
+                                                        <input type="text" name="email" value="{{manufactures.email}}" class="form-control mb-2"  placeholder="Enter Manufacturer Id" />
+                                                    </div>
+                                                </div>
+                                                <div class="fv-row w-100 flex-md-root">
+                                                    <div class="mb-5 fv-row">
+                                                        <label class="required form-label">Mobile Number</label>
+                                                        <input type="text" name="mobile_number" value="{{manufactures.mobile_number}}" class="form-control mb-2"  placeholder="Enter Manufacturer Name" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                                <div class="fv-row w-100 flex-md-root">
+                                                    <div class="mb-5 fv-row">
+                                                        <label class="required form-label">Address</label>
+                                                        <textarea id="address"  class="form-control" name="address" placeholder="Enter Address">{{manufactures.address | safe}}</textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="fv-row w-100 flex-md-root">
+                                                    <div class="mb-5 fv-row">
+                                                        <label class="required form-label">Pincode</label>
+                                                        <input type="text" name="pincode" value="{{manufactures.pincode}}" class="form-control mb-2"  placeholder="Enter Manufacturer Name" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                                <div class="fv-row w-100 flex-md-root">
+                                                    <div class="mb-5 fv-row">
+                                                        <label class="required form-label">State</label>
+                                                        <select class="form-select mb-2" name="category" data-control-select-option="category" data-control="select2"  data-hide-search="false" data-placeholder="Select an option">
+                                                            <option ></option>
+                                                            {% for type in region %}
+
+                                                            <option {% if manufactures.region_id|stringformat:'s' == type.id|stringformat:'s' %} selected  {% endif %} value="{{type.id}}">{{type.display_name}}</option>
+
+                                                            {% endfor %}
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                                <div class="fv-row w-100 flex-md-root">
+                                                    <div class="mb-5 fv-row">
+                                                        <label class="required form-label">City</label>
+                                                        <select class="form-select mb-2" name="brand" data-control-select-option="brand" data-control="select2"  data-hide-search="false" data-placeholder="Select an option">
+                                                            <option ></option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
+
+
+
+
+
+
+                                        </div>
+
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+
+
+                            <!--end::Tab pane-->
+                        </div>
+                        <!--end::Tab content-->
+                        <div class="d-flex justify-content-end">
+                            <!--begin::Button-->
+                            <a href="{% url 'master:manufactures.view' %}" class="btn btn-light me-5">Cancel</a>
+                            <!--end::Button-->
+                            <!--begin::Button-->
+                            <button type="submit" id="create-or-update-vehicle-submit" class="btn btn-primary">
+                                <span class="indicator-label">Save </span>
+                                <span class="indicator-progress">Please wait...
+                                <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                            </button>
+                            <!--end::Button-->
+                        </div>
+                    </div>
+                    <!--end::Main column-->
+                </form>
+                <!--end::Form-->
+            </div>
+            <!--end::Content container-->
+        </div>
+        <!--end::Content-->
+    </div>
+    <!--end::Content wrapper-->
+
+{% endblock content %}
+
+
+
+{% block script %}
+
+    <script>
+        var api_config = {
+            "csrfmiddlewaretoken" : "{{ csrf_token }}",
+            "vehicle_id" : "{{manufactures.id}}",
+
+            "get_city" : "{% url 'master:city.get' %}",
+            "vehicle_data" : {
+                "state_id" : "{{region.id}}",
+                "city_id" : "{{brand.id}}"
+            }
+        }
+    </script>
+
+
+    <script src="{% static 'assets/js/custom/pages/master/manufactures/create-or-update.js' %}?time={% now 'h:i:s' %}"></script>
+
+
+
+{% endblock script %}

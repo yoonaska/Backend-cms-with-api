@@ -1,0 +1,371 @@
+{% extends 'admin/layouts/apps.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<style>
+    .pt-21{
+        padding-top: 20px;
+    }
+</style>
+
+<!--begin::Content wrapper-->
+<div class="d-flex flex-column flex-column-fluid">
+    {% include 'admin/layouts/breadcrumbs.html' %}
+    <!--begin::Content-->
+    <div id="kt_app_content" class="app-content flex-column-fluid">
+        <!--begin::Content container-->
+        <div id="kt_app_content_container" class="app-container container-xxl">
+            <!--begin::Form-->
+            <form id="create-or-update-company-profile-form" class="form d-flex flex-column flex-lg-row" method="POST"
+                enctype="multipart/form-data" action="{% if instance.id is not None %}{% url 'home:our.services.update' instance.id %}{% else %}{% url 'home:our.services.create' %}{% endif %}">
+
+                {% csrf_token %}
+                <input type="hidden" id = "casestudy_id" name="instance_id" value="{{instance.id}}" />
+                <input type="text" name="err_message" value="{{ err_message }}" id="err_message" style="display: none;" />
+
+                <!--begin::Aside column-->
+                <!--begin::Main column-->
+                <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+                    <!--begin::Tab content-->
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="create-or-update-user-general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
+                                <div class="card card-flush py-4">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Our Services</h2>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-0 ">
+                                    <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                        <div class="fv-row w-100 flex-md-root">
+                                            <div class="mb-5 fv-row">
+                                                <label class="form-label">Service Listing Order</label>
+                                                <input type="number" name="order" value="{{instance.order}}"
+                                                    class="form-control mb-2" placeholder="order" style="max-width: 140px;" 
+                                                    oninput="validateInput(this)"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Service Title</label>
+                                                    <input type="text" name="title" value="{{instance.title}}"
+                                                        class="form-control mb-2" placeholder="Enter Service Title" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Link Url <span style="color:red">(Duplicate Value Not Allowed)<span></label>
+                                                    <input type="text" name="url" value="{{instance.url}}"
+                                                        class="form-control mb-2" placeholder="Enter Service Title" maxlength="250"/>
+                                                        <div class="error-message" style="color: red;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">Service Title Full Name</label>
+                                                    <input type="text" name="full_name" value="{{instance.full_name}}"
+                                                        class="form-control mb-2" placeholder="Enter Service Full Name" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Description Title</label>
+                                                    <input type="text" name="description_title" value="{{instance.description_title}}"
+                                                        class="form-control mb-2" placeholder="Enter Description Title" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Service Description</label>
+                                                    <textarea class="form-control mb-2" rows="4" id="notification_title" name="description"
+                                                        placeholder="Enter Meta Keywords">{{instance.description}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">Button Title(Get a Consultation)</label>
+                                                    <input type="text" name="button_titile" value="{{instance.button_titile}}"
+                                                        class="form-control mb-2" placeholder="Enter Service Title" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">Service Description Image</label><br>
+                                                    <span style="color: red">Only *.png, *.jpg, and *.jpeg image files under 1MB in size are accepted.</span>
+                                                    <input type="file" name="service_image" id="service_image" accept="image/*"
+                                                        class="form-control mb-2" onchange="previewImage(event)" />
+                                                </div>
+                                            </div>
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <img id="logo-preview"
+                                                        src="{% if instance.service_image %}{{ instance.service_image.url }}{% else %}{% static 'assets/media/svg/files/blank-image.svg' %}{% endif %}"
+                                                        alt="Logo Preview" class="img-fluid" style="width: 160px;
+                                                height: 70px;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+<!-- SERVICE PONI SECTION-->
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="create-or-update-campaigns-general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
+                                <div class="card card-flush py-4">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h5>Service Descriptions</h5>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-0 ">
+                                        <!--PROJECT AIM POINT SECTION-->
+
+                                        <div id="features">
+                                        <div class="form-group">
+                                            <div data-repeater-list="features">
+                                                {% if service_points  %}
+                                                {% for index in service_points  %}
+                                                <div data-repeater-item>
+                                                    <div class="form-group row ">
+                                                        <div class="col-md-8 pt-21" >
+                                                            <input type="text" name="name" value="{{index.title}}" class="form-control pb-2 mb-2 " placeholder="Enter Title" maxlength="250"/>
+                                                            <textarea class="form-control mb-2" rows="2" name="description" placeholder="Enter Description">{{index.description}}</textarea>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger">
+                                                                <i class="la la-trash-o"></i>Delete
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                                {% else %}
+                                                <div data-repeater-item>
+                                                    <div class="form-group row ">
+                                                        <div class="col-md-8 pt-21">
+                                                            <input type="text" name="name" class="form-control mb-2 " placeholder="Enter The Title" maxlength="250" />
+                                                            <textarea class="form-control mb-2" rows="4" name="description" placeholder="Enter Description"></textarea>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger">
+                                                                <i class="la la-trash-o"></i>Delete
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <!--end::Form group-->
+                                        <!--begin::Form group-->
+                                        <div class="form-group mt-5 mb-5">
+                                            <a href="javascript:;" data-repeater-create class="btn btn-light-primary">
+                                                <i class="la la-plus"></i>Add
+                                            </a>
+                                        </div>
+                                        <!--end::Form group-->
+                                    </div>
+                                    <!--PROJECT AIM POINT END SECTION-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Tab pane-->
+                    </div>
+<!-- SERVICE PONI END SECTION-->
+
+                                    <div class="card-body pt-0 ">
+                                        <div class="card-header">
+                                            <div class="card-title">
+                                                <h2>Seo</h2>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Meta Title</label>
+                                                    <input type="text" name="meta_title" value="{{instance.meta_title}}"
+                                                        class="form-control mb-2" placeholder="Enter Meta Title" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Meta Description</label>
+                                                    <input type="text" name="meta_description" value="{{instance.meta_description}}"
+                                                        class="form-control mb-2" placeholder="Enter Meta Description" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Meta Keywords</label>
+                                                    <span style="color: red;padding: 10px;">(seperated by , )</span>
+                                                    <textarea class="form-control mb-2" rows="4" id="notification_title" name="meta_keyword"
+                                                        placeholder="Enter Meta Keywords">{{instance.meta_keyword}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Image Title</label>
+                                                    <input type="text" name="meta_image_title" value="{{instance.meta_image_title}}"
+                                                        class="form-control mb-2" placeholder="Enter Image Title" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">OG Image</label><br>
+                                                    <span style="color: red;padding: 10px;">Only *.png, *.jpg, and *.jpeg image files under 1MB in size are accepted.</span>
+                                                    <input type="file" name="og_image" id="logo" accept="image/*"
+                                                        class="form-control mb-2" onchange="ogimagepreviewImage(event)" />
+                                                </div>
+                                            </div>
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <img id="og-image-logo-preview"
+                                                        src="{% if instance.og_image %}{{ instance.og_image.url }}{% else %}{% static 'assets/media/svg/files/blank-image.svg' %}{% endif %}"
+                                                        alt="Logo Preview" class="img-fluid" style="width: 160px;
+                                                height: 70px;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <!--end::Tab pane-->
+                        </div>
+
+                        
+                        <!--end::Tab content-->
+                        <div class="d-flex justify-content-end" style='padding-top: 20px;'>
+                            <!--begin::Button-->
+                            <a href="{% url 'home:our.services-view.index' %}" id="kt_ecommerce_add_product_cancel"
+                                class="btn btn-light me-5">Cancel</a>
+                            <!--end::Button-->
+                            <!--begin::Button-->
+                            <button type="submit" id="create-or-update-company-profile-submit" class="btn btn-primary">
+                                <span class="indicator-label" >Save </span>
+                                </button>
+                                <button type="button" id="banner-loader-text" class="indicator-progress btn btn-primary">
+                                <span class="">Please wait...
+                                <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                            </button>
+
+                            <!--end::Button-->
+                        </div>
+                    </div>
+                    <!--end::Main column-->
+            </form>
+            <!--end::Form-->
+        </div>
+        <!--end::Content container-->
+    </div>
+    <!--end::Content-->
+</div>
+<!--end::Content wrapper-->
+{% endblock content %}
+{% block script %}
+<script>
+
+    var api_config = {
+
+        "validation"   : "{% url 'home:validation.our.services-case-study' %}",
+    }
+    
+        $('input[name="url"]').on('keyup', function() {
+            // Get the value from the input field
+            var inputValue = $(this).val();
+            var casestudyId = $('#casestudy_id').val();
+            
+            // Create the data object to send in the AJAX request
+            var postData = {
+                url: inputValue,
+                instance_id: casestudyId
+            };
+        
+            // Cache the Save button element
+            var saveButton = $('#create-or-update-company-profile-submit');
+        
+            // Make the AJAX POST request
+            $.ajax({
+                type: "POST",
+                url: api_config.validation, // Use the 'validation' URL from api_config
+                data: postData,
+                success: function(response) {
+                    // Handle the successful response here
+                    console.log("AJAX request successful:", response);
+        
+                    // Check if the response indicates a duplicate URL
+                    if (response.status_code === 100 && response.message === 'Url Already Exist') {
+                        // Display the error message
+                        $('.error-message').text('Duplicate Value Not Allowed');
+                        // Hide the Save button
+                        saveButton.hide();
+                        // Disable form submission
+                        $('form').on('submit', function(event) {
+                            event.preventDefault();
+                        });
+                    } else {
+                        // Clear the error message, show the Save button, and enable form submission
+                        $('.error-message').text('');
+                        saveButton.show();
+                        $('form').off('submit');
+                    }
+                },
+                error: function(error) {
+                    // Handle any errors here
+                    console.error("AJAX request error:", error);
+                }
+            });
+        });
+        
+
+        // Check if err_message input field has a non-empty value
+        var errMessageInput = document.getElementById('err_message');
+        if (errMessageInput && errMessageInput.value.trim() !== '') {
+            // Display a toastr error message for 3 seconds
+            toastr.error(errMessageInput.value, '', { timeOut: 1000 });
+        }
+
+    
+</script>
+
+<script
+    src="{% static 'assets/js/custom/pages/home-page/our-services/create-or-update-our-services.js' %}?time={% now 'h:i:s' %}"></script>
+
+
+{% endblock script %}
+

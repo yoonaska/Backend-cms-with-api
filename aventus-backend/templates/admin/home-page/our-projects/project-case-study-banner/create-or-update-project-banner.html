@@ -1,0 +1,203 @@
+{% extends 'admin/layouts/apps.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<!--begin::Content wrapper-->
+<div class="d-flex flex-column flex-column-fluid">
+    {% include 'admin/layouts/breadcrumbs.html' %}
+    <!--begin::Content-->
+    <div id="kt_app_content" class="app-content flex-column-fluid">
+        <!--begin::Content container-->
+        <div id="kt_app_content_container" class="app-container container-xxl">
+            <!--begin::Form-->
+            <form id="create-or-update-company-profile-form" class="form d-flex flex-column flex-lg-row" method="POST"
+                enctype="multipart/form-data" action="{% if instance.id is not None %}{% url 'projects:update.projects.details.banner' instance.id %}{% else %}{% url 'projects:create.projects.details.banner' %}{% endif %}">
+                {% csrf_token %}
+                <input type="hidden" name="campaigns_id" value="{{instance.id}}" />
+                <input type="hidden" name="campaign_uuid" value="{{uuid}}" />
+                <input type="text" name="err_message" value="{{ err_message }}" id="err_message" style="display: none;" />
+
+                <!--begin::Main column-->
+                <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+                    <!--begin::Tab content-->
+                    <div class="fv-row">
+                        <div class="dropzone" id="campaign_images_dropzone">
+                            <div class="dz-message needsclick">
+                                <i class="bi bi-file-earmark-arrow-up text-primary fs-3x"></i>
+                                <div class="ms-4">
+                                    <h3 class="fs-5 fw-bold text-gray-900 mb-1">Drop files here or click to upload.</h3>
+                                    <span class="fs-7 fw-semibold text-gray-400">Upload up to 10 files</span><br>
+                                    <span class="fs-7 fw-semibold text-gray-400">Only image files with the extensions of
+                                        *.png, *.jpg, and *.jpeg are accepted, and files under 1 MB are accepted</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="create-or-update-user-general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
+                                <div class="card card-flush py-4">
+                                    {% comment %} <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Project CaseStudy Banner</h2>
+                                        </div>
+                                    </div> {% endcomment %}
+                                    <div class="card-body pt-0 ">
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Project</label>
+                                                    <select class="form-select mb-2" name="project"
+                                                        data-control="select2" data-hide-search="false"
+                                                        data-placeholder="Select The Project">
+                                                        {% for category in categories %}
+                                                        <option></option>
+                                                        <option {% if instance.project_id == category.id %} selected {% endif %} value="{{category.id}}">
+                                                            {{ category.project_name }}{% if category.service %}/{% endif %}
+                                                            {% if category.service %}
+                                                                {{ category.service.title }}
+                                                            {% endif %}
+                                                        </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">Tech Stack</label>
+                                                    <select class="form-select mb-2" name="tech_stack_one"
+                                                        data-control="select2" data-hide-search="false"
+                                                        data-placeholder="Select The Tech Stack">
+                                                        <option></option>
+                                                        {% for category in tech_stack %}
+                                                        <option value="{{ category.id }}" {% if instance.tech_stack_one == category %} selected {% endif %}>
+                                                            {{ category.stack_title }}
+                                                        </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class=" form-label">Tech Stack</label>
+                                                    <select class="form-select mb-2" name="tech_stack_two"
+                                                        data-control="select2" data-hide-search="false"
+                                                        data-placeholder="Select The Tech Stack">
+                                                        <option></option>
+                                                        {% for category in tech_stack %}
+                                                        <option value="{{ category.id }}" {% if instance.tech_stack_two == category %} selected {% endif %}>
+                                                            {{ category.stack_title }}
+                                                        </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">Domain Title(Top Title)</label>
+                                                    <input type="text" name="domain_title" value="{{instance.domain_title}}"
+                                                        class="form-control mb-2" placeholder="Enter Domain Title eg:UI/Ux" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Title</label>
+                                                    <input type="text" name="title" value="{{instance.title}}"
+                                                        class="form-control mb-2" placeholder="Enter Title" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Description</label>
+                                                    <textarea class="form-control mb-2" rows="2" id="id_content" name="description"
+                                                        placeholder="Enter Description">{{instance.description}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% comment %} <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Link Url</label>
+                                                    <input type="text" name="url" value="{{instance.url}}"
+                                                        class="form-control mb-2" placeholder="Enter Service Title" />
+                                                </div>
+                                            </div>
+                                        </div> {% endcomment %}
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Tab pane-->
+                        </div>
+
+                        
+                        <!--end::Tab content-->
+                        <div class="d-flex justify-content-end" style='padding-top: 20px;'>
+                            <!--begin::Button-->
+                            <a href="{% url 'projects:project.case.study.banner.listing' %}" id="kt_ecommerce_add_product_cancel"
+                                class="btn btn-light me-5">Cancel</a>
+                            <!--end::Button-->
+                            <!--begin::Button-->
+                            <button type="submit" id="create-or-update-company-profile-submit" class="btn btn-primary">
+                                <span class="indicator-label" >Save </span>
+                                </button>
+                                <button type="button" id="banner-loader-text" class="indicator-progress btn btn-primary">
+                                <span class="">Please wait...
+                                <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                            </button>
+                            <!--end::Button-->
+                        </div>
+                    </div>
+                    <!--end::Main column-->
+            </form>
+            <!--end::Form-->
+        </div>
+        <!--end::Content container-->
+    </div>
+    <!--end::Content-->
+</div>
+<!--end::Content wrapper-->
+{% endblock content %}
+{% block script %}
+
+<script>
+        
+    var api_config = {
+        "campaign_image_upload_api_url"   : "{% url 'projects:project-case-study-banner.image.upload' %}",
+        "uuid"                            : "{{uuid}}",
+        "csrfmiddlewaretoken"             : "{{ csrf_token }}",
+        "get_campaign_images_api_url"     : "{% url 'projects:get.project-case-study-banner.images' %}",
+        "temporary_image_destroy_api_url" : "{% url 'projects:project-case-study-banner-temporary.image.destroy' %}",
+        "campaign_id"                     : "{{instance.id}}",
+
+    }
+
+</script>
+
+<script>
+    // Check if err_message input field has a non-empty value
+    var errMessageInput = document.getElementById('err_message');
+    if (errMessageInput && errMessageInput.value.trim() !== '') {
+        // Display a toastr error message for 3 seconds
+        toastr.error(errMessageInput.value, '', { timeOut: 1000 });
+    }
+</script>
+<script
+    src="{% static 'assets/js/custom/pages/home-page/our-projects/project-case-study-banner-section/create-or-update-project-case-study-banner.js' %}?time={% now 'h:i:s' %}"></script>
+
+{% endblock script %}
+

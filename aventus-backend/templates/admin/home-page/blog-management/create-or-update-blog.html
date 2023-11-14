@@ -1,0 +1,350 @@
+{% extends 'admin/layouts/apps.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<!--begin::Content wrapper-->
+<div class="d-flex flex-column flex-column-fluid">
+    {% include 'admin/layouts/breadcrumbs.html' %}
+    <!--begin::Content-->
+    <div id="kt_app_content" class="app-content flex-column-fluid">
+        <!--begin::Content container-->
+        <div id="kt_app_content_container" class="app-container container-xxl">
+            <!--begin::Form-->
+            <form id="create-or-update-company-profile-form" class="form d-flex flex-column flex-lg-row" method="POST"
+                enctype="multipart/form-data" action="{% if instance.id is not None %}{% url 'blog:blog.update' instance.id %}{% else %}{% url 'blog:blog.create' %}{% endif %}">
+                {% csrf_token %}
+                <input type="hidden" name="instance_id" value="{{instance.id}}" />
+                <input type="text" name="err_message" value="{{ err_message }}" id="err_message" style="display: none;" />
+                <!--begin::Aside column-->
+                <!--begin::Main column-->
+                <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+                    <!--begin::Tab content-->
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="create-or-update-user-general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
+                                <div class="card card-flush py-4">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Blog</h2>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-0 ">
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Title</label>
+                                                    <input type="text" name="title" value="{{instance.title}}"
+                                                        class="form-control mb-2" placeholder="Enter Title" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">Blog Tags</label>
+                                                    <textarea  class="form-control mb-2" rows="1" id="mytextarea" name="tags" placeholder="Enter # Tags"  >{{instance.tags}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label for="" class="form-label required">Date and time</label>
+                                                    <input class="form-control form-control event_date" name="blog_date" placeholder="Pick date & time" {% if instance.date %} value='{{instance.date |date:"Y-m-d H:i"}}' {% endif %} id="datepicker"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">Description</label>
+                                                    <textarea class="form-control mb-2" rows="4" id="mytextarea1" name="description"
+                                                        placeholder="Enter Description">{{instance.description}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">Image</label><br>
+                                                    <span style="color: red;padding: 10px;">Only *.png, *.jpg, and *.jpeg image files under 1MB in size are accepted.</span>
+                                                    <input type="file" name="blog_image" id="logo" accept="image/*"
+                                                        class="form-control mb-2" onchange="previewImage(event)" />
+                                                </div>
+                                            </div>
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <img id="logo-preview"
+                                                        src="{% if instance.blog_image %}{{ instance.blog_image.url }}{% else %}{% static 'assets/media/svg/files/blank-image.svg' %}{% endif %}"
+                                                        alt="Logo Preview" class="img-fluid" style="width: 160px;
+                                                height: 70px;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-body pt-0 ">
+                                        <div class="card-header">
+                                            <div class="card-title">
+                                                <h2>Blog Seo</h2>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Meta Title</label>
+                                                    <input type="text" name="meta_title" value="{{instance.meta_title}}"
+                                                        class="form-control mb-2" placeholder="Enter Meta Title" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Meta Description</label>
+                                                    <input type="text" name="meta_description" value="{{instance.meta_description}}"
+                                                        class="form-control mb-2" placeholder="Enter Meta Description" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Meta Keywords</label>
+                                                    <span style="color: red;padding: 10px;">(seperated by , )</span>
+                                                    <textarea class="form-control mb-2" rows="4" id="notification_title" name="meta_keyword"
+                                                        placeholder="Enter Meta Keywords">{{instance.meta_keyword}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Image Title</label>
+                                                    <input type="text" name="meta_image_title" value="{{instance.meta_image_title}}"
+                                                        class="form-control mb-2" placeholder="Enter Image Title" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">OG Image</label><br>
+                                                    <span style="color: red;padding: 10px;">Only *.png, *.jpg, and *.jpeg image files under 1MB in size are accepted.</span>
+                                                    <input type="file" name="og_image" id="logo" accept="image/*"
+                                                        class="form-control mb-2" onchange="ogimagepreviewImage(event)" />
+                                                </div>
+                                            </div>
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <img id="og-image-logo-preview"
+                                                        src="{% if instance.og_image %}{{ instance.og_image.url }}{% else %}{% static 'assets/media/svg/files/blank-image.svg' %}{% endif %}"
+                                                        alt="Logo Preview" class="img-fluid" style="width: 160px;
+                                                height: 70px;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+                            <!--end::Tab pane-->
+                        </div>
+
+                        
+                        <!--end::Tab content-->
+                        <div class="d-flex justify-content-end" style='padding-top: 20px;'>
+                            <!--begin::Button-->
+                            <a href="{% url 'blog:blog-view.index' %}" id="kt_ecommerce_add_product_cancel"
+                                class="btn btn-light me-5">Cancel</a>
+                            <!--end::Button-->
+                            <!--begin::Button-->
+                            <button type="submit" id="create-or-update-company-profile-submit" class="btn btn-primary">
+                                <span class="indicator-label" >Save </span>
+                                </button>
+                                <button type="button" id="banner-loader-text" class="indicator-progress btn btn-primary">
+                                <span class="">Please wait...
+                                <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                            </button>
+                            <!--end::Button-->
+                        </div>
+                    </div>
+                    <!--end::Main column-->
+            </form>
+            <!--end::Form-->
+        </div>
+        <!--end::Content container-->
+    </div>
+    <!--end::Content-->
+</div>
+<!--end::Content wrapper-->
+{% endblock content %}
+{% block script %}
+
+<script>
+    var api_config= {
+        'ckeditor-file-to-server': "{% url 'blog:ckeditor_file_to_server' %}",
+        'csrfmiddlewaretoken'   : '{{ csrf_token }}',
+    };
+   
+</script>
+
+
+<script src="assets/plugins/global/plugins.bundle.js"></script>
+
+<script src="https://cdn.ckeditor.com/ckeditor5/12.0.0/classic/ckeditor.js"></script>
+
+
+<script>
+    class MyUploadAdapter {
+        constructor(loader) {
+            // Save Loader instance to update upload progress.
+            this.loader = loader;
+        }
+
+        // Starts the upload process.
+        upload() {
+            return this.loader.file
+                .then(file => new Promise((resolve, reject) => {
+                    this._initRequest();
+                    this._initListeners(resolve, reject, file);
+                    this._sendRequest(file);
+                }));
+        }
+
+        // Aborts the upload process.
+        abort() {
+            if (this.xhr) {
+                this.xhr.abort();
+            }
+        }
+
+        // Initializes the XMLHttpRequest object.
+        _initRequest() {
+            const xhr = this.xhr = new XMLHttpRequest();
+
+            xhr.open('POST', api_config['ckeditor-file-to-server'], true);
+            xhr.setRequestHeader('X-CSRF-Token', 'your_csrf_token');
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.responseType = 'json';
+        }
+
+        // Initializes XMLHttpRequest listeners.
+        _initListeners(resolve, reject, file) {
+            const xhr = this.xhr;
+            const loader = this.loader;
+            const genericErrorText = `Couldn't upload file: ${file.name}.`;
+
+            xhr.addEventListener('error', () => reject(genericErrorText));
+            xhr.addEventListener('abort', () => reject());
+            xhr.addEventListener('load', () => {
+                const response = xhr.response;
+
+                if (!response || response.error) {
+                    return reject(response && response.error ? response.error.message : genericErrorText);
+                }
+
+                resolve({
+                    default: response.url
+                });
+            });
+
+            if (xhr.upload) {
+                xhr.upload.addEventListener('progress', evt => {
+                    if (evt.lengthComputable) {
+                        loader.uploadTotal = evt.total;
+                        loader.uploaded = evt.loaded;
+                    }
+                });
+            }
+        }
+
+        // Sends the file to the server.
+        _sendRequest(file) {
+            let token = $('#detail').val()
+            console.log(token)
+            const data = new FormData();
+            data.append('upload', file);
+            data.append('csrfmiddlewaretoken', token);
+
+            this.xhr.send(data);
+        }
+    }
+
+    function MyCustomUploadAdapterPlugin(editor) {
+        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+            // Configure the URL and other options here
+            return new MyUploadAdapter(loader);
+        };
+    }
+
+    ClassicEditor
+        .create(document.querySelector('#mytextarea1'), {
+            extraPlugins: [MyCustomUploadAdapterPlugin],
+
+            // Configure the image properties here
+            image: {
+                styles: [
+                    'full',
+                    'side',
+                    'alignLeft',
+                    'alignCenter',
+                    'alignRight'
+                ],
+                resizeOptions: [
+                    {
+                        name: 'imageResize:original',
+                        value: null,
+                        label: 'Original size'
+                    },
+                    {
+                        name: 'imageResize:custom1',
+                        value: '400px',
+                        label: 'Custom Size 1 (400px)'
+                    },
+                    {
+                        name: 'imageResize:custom2',
+                        value: '800px',
+                        label: 'Custom Size 2 (800px)'
+                    }
+                ],
+                toolbar: [
+                    'imageStyle:full',
+                    'imageStyle:side',
+                    '|',
+                    'imageTextAlternative',
+                    '|',
+                    'imageResize',
+                    '|',
+                    'imageStyle:alignLeft',
+                    'imageStyle:alignCenter',
+                    'imageStyle:alignRight',
+                    '|',
+                    'imageRemove'
+                ]
+ 
+            }
+        })
+        .catch(error => {
+            console.error(error);
+        });
+</script>
+
+
+
+
+
+<script
+    src="{% static 'assets/js/custom/pages/home-page/blog-management/create-or-update-blog.js' %}?time={% now 'h:i:s' %}"></script>
+
+
+{% endblock script %}

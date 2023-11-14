@@ -1,0 +1,301 @@
+{% extends 'admin/layouts/apps.html' %}
+{% load static %}
+
+
+{% block content %}
+<style>
+    .pt-21 {
+        padding-top: 20px;
+    }
+</style>
+<!--begin::Content wrapper-->
+<div class="d-flex flex-column flex-column-fluid">
+    {% include 'admin/layouts/breadcrumbs.html' %}
+    <!--begin::Content-->
+    <div id="kt_app_content" class="app-content flex-column-fluid">
+        <!--begin::Content container-->
+        <div id="kt_app_content_container" class="app-container container-xxl">
+            <!--begin::Form-->
+            <form id="create-or-update-company-profile-form" class="form d-flex flex-column flex-lg-row" method="POST"
+                enctype="multipart/form-data" action="{% if instance.id is not None %}{% url 'career:job.vacancy.update' instance.id %}{% else %}{% url 'career:job.vacancy.create' %}{% endif %}">
+                {% csrf_token %}
+                <input type="hidden" name="instance_id" value="{{instance.id}}" />
+                <input type="text" name="err_message" value="{{ err_message }}" id="err_message" style="display: none;" />
+
+                <!--begin::Main column-->
+                <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+                    <!--begin:::Tabs-->
+
+                    <!--end:::Tabs-->
+                    <!--begin::Tab content-->
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="create-or-update-user-general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
+                                <div class="card card-flush py-4">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Job</h2>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-0 ">
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Designation</label>
+                                                    <input type="text" name="designation"
+                                                        value="{{instance.designation}}" class="form-control mb-2"
+                                                        placeholder="Enter Designation" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Minimum Experience</label>
+                                                    <input type="number" class="form-control mb-2" rows="2"
+                                                        id="notification_title" name="min_exp"
+                                                        placeholder="Enter The Minimum Experience"
+                                                        value="{{instance.min_exp}}" min="0" step="1">
+                                                </div>
+                                            </div>
+
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="fv-row w-100 flex-md-root">
+                                                    <div class="mb-5 fv-row">
+                                                        <label class="required form-label">Maximum Experience</label>
+                                                        <input type="number" class="form-control mb-2" rows="2"
+                                                            id="notification_title" name="max_exp"
+                                                            placeholder="Enter The Maximum Experience"
+                                                            value="{{instance.max_exp}}" min="0" step="1">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">Description</label>
+                                                    <textarea class="form-control mb-2" rows="4" id="mytextarea"name="description"placeholder="Enter The Description">{{instance.description}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">Tags</label>
+                                                    <textarea  class="form-control mb-2" rows="1"  name="tags" placeholder="Enter # Tags"  >{{instance.tags}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="features">
+                                            <div class="form-group">
+                                                <label class="form-label">Responsibilities</label>
+
+                                                <div data-repeater-list="features">
+                                                    {% if responsibilities %}
+                                                    {% for index in responsibilities %}
+                                                    <div data-repeater-item>
+                                                        <div class="form-group row pt-21">
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="name" value="{{index.Points}}"
+                                                                    class="form-control mb-2 mb-md-0"
+                                                                    placeholder="{{index.Points}}" maxlength="250" />
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <a href="javascript:;" data-repeater-delete
+                                                                    class="btn btn-sm btn-light-danger ">
+                                                                    <i class="la la-trash-o"></i>Delete
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                    {% else %}
+                                                    <div data-repeater-item>
+                                                        <div class="form-group row pt-21">
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="name"
+                                                                    class="form-control mb-2 mb-md-0"
+                                                                    placeholder="Add Points" maxlength="250"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <a href="javascript:;" data-repeater-delete
+                                                                    class="btn btn-sm btn-light-danger ">
+                                                                    <i class="la la-trash-o"></i>Delete
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                <!--end::Form group-->
+                                                <!--begin::Form group-->
+                                                <div class="form-group mt-5 mb-5">
+                                                    <a href="javascript:;" data-repeater-create
+                                                        class="btn btn-light-primary">
+                                                        <i class="la la-plus"></i>Add
+                                                    </a>
+                                                </div>
+                                                <!--end::Form group-->
+                                            </div>
+                                        </div>
+                                        <label class="form-label ">Skill</label>
+                                        <div id="subfeatures">
+                                            <div class="form-group">
+                                                <div data-repeater-list="subfeatures">
+                                                    {% if skills %}
+                                                    {% for index in skills %}
+                                                    <div data-repeater-item>
+                                                        <div class="form-group row pt-21">
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="subname"
+                                                                    value="{{index.Points}}"
+                                                                    class="form-control mb-2 mb-md-0"
+                                                                    placeholder="{{index.Points}}" maxlength="250"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <a href="javascript:;" data-repeater-delete
+                                                                    class="btn btn-sm btn-light-danger ">
+                                                                    <i class="la la-trash-o"></i>Delete
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                    {% else %}
+                                                    <div data-repeater-item>
+                                                        <div class="form-group row pt-21">
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="subname"
+                                                                    class="form-control mb-2 mb-md-0"
+                                                                    placeholder="Add Points" maxlength="250"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <a href="javascript:;" data-repeater-delete
+                                                                    class="btn btn-sm btn-light-danger ">
+                                                                    <i class="la la-trash-o"></i>Delete
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <!--end::Form group-->
+
+                                            <!--begin::Form group-->
+                                            <div class="form-group mt-5">
+                                                <a href="javascript:;" data-repeater-create
+                                                    class="btn btn-light-primary">
+                                                    <i class="la la-plus"></i>Add
+                                                </a>
+                                            </div>
+                                            <!--end::Form group-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--end::Tab pane-->
+                </div>
+        </div>
+    </div>
+</div>
+<!--end::Tab content-->
+<div class="d-flex justify-content-end" style="padding-right: 31px;padding-bottom: 22px;">
+    <!--begin::Button-->
+    <a href="{% url 'career:job.vacancy.view.index' %}" id="kt_ecommerce_add_product_cancel"
+        class="btn btn-light me-5">Cancel</a>
+    <!--end::Button-->
+    <!--begin::Button-->
+    <button type="submit" id="create-or-update-company-profile-submit" class="btn btn-primary">
+        <span class="indicator-label">Save </span>
+    </button>
+    <button type="button" id="banner-loader-text" class="indicator-progress btn btn-primary">
+        <span class="">Please wait...
+            <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+    </button>
+    <!--end::Button-->
+</div>
+</div>
+<!--end::Main column-->
+</form>
+<!--end::Form-->
+</div>
+<!--end::Content container-->
+
+<!--end::Content-->
+
+<!--end::Content wrapper-->
+{% endblock content %}
+{% block script %}
+
+<script src="//cdn.ckeditor.com/4.20.2/standard/ckeditor.js"></script>
+<script>
+    if (typeof CKEDITOR !== 'undefined') {
+
+        CKEDITOR.replace('mytextarea', {
+            height: 200, // Set the height of the editor to 300 pixels
+            toolbar: [
+                { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
+                { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl'] },
+                { name: 'links', items: ['Link', 'Unlink', 'Anchor'] },
+                { name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize'] },
+                { name: 'colors', items: ['TextColor', 'BGColor'] },
+                { name: 'tools', items: ['Maximize', 'ShowBlocks', '-',] }
+                
+            ]
+        });
+    }
+
+    $('#features').repeater({
+        initEmpty: false,
+
+        defaultValues: {
+            'text-input': 'foo'
+        },
+
+        show: function () {
+            $(this).slideDown();
+        },
+
+        hide: function (deleteElement) {
+            $(this).slideUp(deleteElement);
+        }
+    });
+
+    $('#subfeatures').repeater({
+        initEmpty: false,
+
+        defaultValues: {
+            'text-input': 'foo'
+        },
+
+        show: function () {
+            $(this).slideDown();
+        },
+
+        hide: function (deleteElement) {
+            $(this).slideUp(deleteElement);
+        }
+    });
+
+    // Check if err_message input field has a non-empty value
+    var errMessageInput = document.getElementById('err_message');
+    if (errMessageInput && errMessageInput.value.trim() !== '') {
+        // Display a toastr error message for 3 seconds
+        toastr.error(errMessageInput.value, '', { timeOut: 1000 });
+    }
+
+
+</script>
+
+
+
+<script
+    src="{% static 'assets/js/custom/pages/home-page/carrer/job-vacancy/job/create-or-update-job.js' %}?time={% now 'h:i:s' %}"></script>
+
+{% endblock script %}

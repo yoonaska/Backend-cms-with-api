@@ -1,0 +1,924 @@
+{% extends 'admin/layouts/apps.html' %}
+{% load static %}
+
+
+{% block content %}
+<style>
+    .pt-21{
+        padding-top: 20px;
+    }
+</style>
+<!--begin::Content wrapper-->
+<div class="d-flex flex-column flex-column-fluid">
+    {% include 'admin/layouts/breadcrumbs.html' %}
+    <!--begin::Content-->
+    <div id="kt_app_content" class="app-content flex-column-fluid">
+        <!--begin::Content container-->
+        <div id="kt_app_content_container" class="app-container container-xxl">
+            <!--begin::Form-->
+            <form id="create-or-update-campaigns-form" class="form d-flex flex-column flex-lg-row" method="POST"
+                enctype="multipart/form-data" action="{% if instance.id is not None %}{% url 'projects:update.project-case-study' instance.id %}{% else %}{% url 'projects:create.project-case-study' %}{% endif %}">
+            
+                {% csrf_token %}
+                <input type="hidden" id="casestudy_id" name="campaigns_id" value="{{instance.id}}" />
+                <input type="hidden" name="campaign_uuid" value="{{uuid}}" />
+                <input type="text" name="err_message" value="{{ err_message }}" id="err_message" style="display: none;" />
+
+                <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+                    <div class="fv-row">
+                        <div class="dropzone" id="campaign_images_dropzone">
+                            <div class="dz-message needsclick">
+                                <i class="bi bi-file-earmark-arrow-up text-primary fs-3x"></i>
+                                <div class="ms-4">
+                                    <h3 class="fs-5 fw-bold text-gray-900 mb-1">Drop files here or click to upload.</h3>
+                                    <span class="fs-7 fw-semibold text-gray-400">Upload up to 10 files</span><br>
+                                    <span class="fs-7 fw-semibold text-gray-400">Only image files with the extensions of
+                                        *.png, *.jpg, and *.jpeg are accepted, and files under 1 MB are accepted</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="create-or-update-campaigns-general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
+                                <div class="card card-flush py-4">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Project</h2>
+                                            <span style="color: red;padding: 10px;">For Listing</span>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-0 ">
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Domain</label>
+                                                    <select class="form-select mb-2" name="domain"
+                                                        data-control="select2" data-hide-search="false"
+                                                        data-placeholder="Select The Domain">
+                                                        {% for category in categories %}
+                                                        <option></option>
+                                                        <option {% if instance.domain == category %} selected {% endif %} value="{{category.id}}">{{category.title}}</option>{% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Service</label>
+                                                <select class="form-select mb-2" name="service"
+                                                        data-control="select2" data-hide-search="false"
+                                                        data-placeholder="Select The Service">
+                                                        {% for our_service in our_services %}
+                                                        <option></option>
+                                                        <option {% if instance.service == our_service %} selected {% endif %} value="{{our_service.id}}">{{our_service.title}}</option>{% endfor %}
+                                                </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Project Name</label>
+                                                    <input type="text" name="project_name"
+                                                        value="{{instance.project_name}}" class="form-control mb-2"
+                                                        placeholder="Enter Project Name" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Link Url <span style="color:red">(Duplicate Value Not Allowed)<span></label>
+                                                    <input type="text" name="url" value="{{instance.url}}"
+                                                        class="form-control mb-2" placeholder="Enter Service Title" maxlength="250"/>
+                                                    <div class="error-message" style="color: red;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Image Or Gif</label><br>
+                                                    <input type="file" name="project_image" id="logo" accept="image/*,.gif"
+                                                        class="form-control mb-2" onchange="previewImage(event)" />
+                                                </div>
+                                            </div>
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <img id="logo-preview"
+                                                        src="{% if instance.project_image %}{{ instance.project_image.url }}{% else %}{% static 'assets/media/svg/files/blank-image.svg' %}{% endif %}"
+                                                        alt="Logo Preview" class="img-fluid" style="width: 160px;
+                                                            height: 70px;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">Project Tags</label>
+                                                        <textarea  class="form-control mb-2" rows="1" id="mytextarea" name="project_tags" placeholder="Enter Project Tags"  >{{instance.project_tags}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Tab pane-->
+                    </div>
+
+                    <!--PROJECT BANNER SECTION-->
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="create-or-update-campaigns-general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
+                                <div class="card card-flush py-4">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Project Banner</h2>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-0 ">
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Banner Title</label>
+                                                    <input type="text" name="banner_title"
+                                                        value="{{instance.banner_title}}" class="form-control mb-2"
+                                                        placeholder="Enter Project Name" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Banner Description</label>
+                                                    <textarea  class="form-control mb-2" rows="4" id="mytextarea" name="banner_description" placeholder="Enter The Description"  >{{instance.banner_description}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Project Logo</label><br>
+                                                    <input type="file" name="project_logo" id="logo" accept="image/*"
+                                                        class="form-control mb-2" onchange="ImagePreviewLogoImage(event)" />
+                                                </div>
+                                            </div>
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <img id="project_logo_image_preview"
+                                                        src="{% if instance.project_logo %}{{ instance.project_logo.url }}{% else %}{% static 'assets/media/svg/files/blank-image.svg' %}{% endif %}"
+                                                        alt="Logo Preview" class="img-fluid" style="width: 160px;
+                                                            height: 70px;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Banner Image</label><br>
+                                                    <input type="file" name="project_image_banner" id="logo" accept="image/*"
+                                                        class="form-control mb-2" onchange="BannerImagePreviewImage(event)" />
+                                                </div>
+                                            </div>
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <img id="project_Banner_image_preview"
+                                                        src="{% if instance.project_image_banner %}{{ instance.project_image_banner.url }}{% else %}{% static 'assets/media/svg/files/blank-image.svg' %}{% endif %}"
+                                                        alt="Logo Preview" class="img-fluid" style="width: 160px;
+                                                            height: 70px;" />
+                                                </div>
+                                            </div>
+                                        </div> 
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Tab pane-->
+                    </div>
+                    <!--PROJECT BANNER SECTION END-->
+
+
+
+                    <!--PROJECT AIM SECTION-->
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="create-or-update-campaigns-general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
+                                <div class="card card-flush py-4">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Project Aim</h2>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-0 ">
+                                        <!--PROJECT AIM POINT SECTION-->
+                                        <div id="features">
+                                            <div class="form-group">
+                                                <label class="form-label">Points:</label>
+                                                <div data-repeater-list="features">
+                                                    {% if project_aim  %}
+                                                    {% for index in project_aim  %}
+                                                    <div data-repeater-item>
+                                                        <div class="form-group row pt-21">
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="name"value="{{index.Points}}"class="form-control mb-2 mb-md-0"placeholder="{{index.Points}}" maxlength="250"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <a href="javascript:;" data-repeater-delete
+                                                                    class="btn btn-sm btn-light-danger ">
+                                                                    <i class="la la-trash-o"></i>Delete
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                    {% else %}
+                                                    <div data-repeater-item>
+                                                        <div class="form-group row pt-21">
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="name"
+                                                                    class="form-control mb-2 mb-md-0"
+                                                                    placeholder="Add Points" maxlength="250"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <a href="javascript:;" data-repeater-delete
+                                                                    class="btn btn-sm btn-light-danger ">
+                                                                    <i class="la la-trash-o"></i>Delete
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                <!--end::Form group-->
+                                                <!--begin::Form group-->
+                                                <div class="form-group mt-5 mb-5">
+                                                    <a href="javascript:;" data-repeater-create
+                                                        class="btn btn-light-primary">
+                                                        <i class="la la-plus"></i>Add
+                                                    </a>
+                                                </div>
+                                                <!--end::Form group-->
+                                            </div>
+                                        </div>
+                                    <!--PROJECT AIM POINT END SECTION-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Tab pane-->
+                    </div>
+                    <!--PROJECT AIM SECTION END-->
+
+
+                    <!--PROJECT AIM SECTION-->
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="create-or-update-campaigns-general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
+                                <div class="card card-flush py-4">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Problem Statement</h2>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-0 ">
+                                        <!--PROJECT AIM POINT SECTION-->
+                                        <div id="problem_statement">
+                                            <div class="form-group">
+                                                <label class="form-label">Points:</label>
+                                                <div data-repeater-list="problem_statement">
+                                                    {% if project_problem_statement  %}
+                                                    {% for index in project_problem_statement  %}
+                                                    <div data-repeater-item>
+                                                        <div class="form-group row pt-21">
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="name"value="{{index.Points}}"class="form-control mb-2 mb-md-0"placeholder="{{index.Points}}" maxlength="250"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <a href="javascript:;" data-repeater-delete
+                                                                    class="btn btn-sm btn-light-danger ">
+                                                                    <i class="la la-trash-o"></i>Delete
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                    {% else %}
+                                                    <div data-repeater-item>
+                                                        <div class="form-group row pt-21">
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="name" class="form-control mb-2 mb-md-0" placeholder="Add Points" maxlength="250"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <a href="javascript:;" data-repeater-delete
+                                                                    class="btn btn-sm btn-light-danger ">
+                                                                    <i class="la la-trash-o"></i>Delete
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                <!--end::Form group-->
+                                                <!--begin::Form group-->
+                                                <div class="form-group mt-5 mb-5">
+                                                    <a href="javascript:;" data-repeater-create
+                                                        class="btn btn-light-primary">
+                                                        <i class="la la-plus"></i>Add
+                                                    </a>
+                                                </div>
+                                                <!--end::Form group-->
+                                            </div>
+                                        </div>
+                                        <!--PROJECT AIM POINT END SECTION-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Tab pane-->
+                    </div>
+                    <!--PROJECT AIM SECTION END-->
+
+
+                    <!--PROJECT ELIMINATING CHALLENGES SECTION-->
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="create-or-update-campaigns-general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
+                                <div class="card card-flush py-4">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Eliminating Challenges</h2>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-0 ">
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">Description</label>
+                                                    <textarea  class="form-control mb-2" rows="4" id="mytextarea" name="challenges_description" placeholder="Enter The Description"  >{{instance.eliminating_challenges_description}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--PROJECT ELIMINATING CHALLENGES POINT SECTION-->
+                                        <div id="project_challenges_points">
+                                            <div class="form-group">
+                                                <label class="form-label">Points:</label>
+                                                <div data-repeater-list="project_challenges_points">
+                                                    {% if project_challenges_points  %}
+                                                    {% for index in project_challenges_points  %}
+                                                    <div data-repeater-item>
+                                                        <div class="form-group row pt-21">
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="name"value="{{index.Points}}"class="form-control mb-2 mb-md-0"placeholder="{{index.Points}}" maxlength="250"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <a href="javascript:;" data-repeater-delete
+                                                                    class="btn btn-sm btn-light-danger ">
+                                                                    <i class="la la-trash-o"></i>Delete
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                    {% else %}
+                                                    <div data-repeater-item>
+                                                        <div class="form-group row pt-21">
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="name"
+                                                                    class="form-control mb-2 mb-md-0"
+                                                                    placeholder="Add Points" maxlength="250"/>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <a href="javascript:;" data-repeater-delete
+                                                                    class="btn btn-sm btn-light-danger ">
+                                                                    <i class="la la-trash-o"></i>Delete
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                <!--end::Form group-->
+                                                <!--begin::Form group-->
+                                                <div class="form-group mt-5 mb-5">
+                                                    <a href="javascript:;" data-repeater-create
+                                                        class="btn btn-light-primary">
+                                                        <i class="la la-plus"></i>Add
+                                                    </a>
+                                                </div>
+                                                <!--end::Form group-->
+                                            </div>
+                                        </div>
+                                    <!--PROJECT ELIMINATING CHALLENGES POINT END SECTION-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Tab pane-->
+                    </div>
+                    <!--PROJECT ELIMINATING CHALLENGES END-->
+
+
+                    <!--PROJECT MILSTONE SECTION-->
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="create-or-update-campaigns-general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
+                                <div class="card card-flush py-4">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Project Milestone</h2>
+                                            <span style="color: red;padding: 10px;">In Weeks</span>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-0 ">
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class=" form-label">Research</label>
+                                                    <input type="number" name="research" inputmode="numeric" pattern="[0-9]*" step="1" min="0" value="{{ instance.research }}" class="form-control mb-2" placeholder="Enter Weeks" onkeydown="if(event.key==='e' || event.key==='E'){event.preventDefault();}" />
+                                                </div>
+                                            </div>
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class=" form-label">Design Strategy</label>
+                                                    <input type="number" name="design_strategy" inputmode="numeric" pattern="[0-9]*" step="1" min="0" value="{{instance.design_strategy}}" class="form-control mb-2" placeholder="Enter Weeks" onkeydown="if(event.key==='e' || event.key==='E'){event.preventDefault();}" />
+                                                </div>
+                                            </div>
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class=" form-label">User Interface (UI)</label>
+                                                    <input type="number" name="ui" inputmode="numeric" pattern="[0-9]*" step="1" min="0" value="{{ instance.ui }}" class="form-control mb-2" placeholder="Enter Weeks" onkeydown="if(event.key==='e' || event.key==='E'){event.preventDefault();}" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class=" form-label">Backend Development</label>
+                                                    <input type="number" name="backend_development" inputmode="numeric" pattern="[0-9]*" step="1" min="0" value="{{ instance.backend_development }}" class="form-control mb-2" placeholder="Enter Weeks" onkeydown="if(event.key==='e' || event.key==='E'){event.preventDefault();}" />
+                                                </div>
+                                            </div>
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class=" form-label">Front End Development</label>
+                                                    <input type="number" name="frontend_development" inputmode="numeric" pattern="[0-9]*" step="1" min="0" value="{{ instance.frontend_development }}" class="form-control mb-2" placeholder="Enter Weeks" onkeydown="if(event.key==='e' || event.key==='E'){event.preventDefault();}" />
+                                                </div>
+                                            </div>
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class=" form-label">Testing </label>
+                                                    <input type="number" name="testing" inputmode="numeric" pattern="[0-9]*" step="1" min="0" value="{{ instance.testing }}" class="form-control mb-2" placeholder="Enter Weeks" onkeydown="if(event.key==='e' || event.key==='E'){event.preventDefault();}" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Tab pane-->
+                    </div>
+                    <!--PROJECT MILSTONE SECTION END-->
+
+                    <!--PROJECT TECHNOLOGY SECTION-->
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="create-or-update-campaigns-general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
+                                <div class="card card-flush py-4">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Tech Stack</h2>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card-body pt-0 ">
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class=" form-label">Front Technology</label>
+                                                    <input type="text" name="front_technology"
+                                                        value="{{instance.front_technology}}" class="form-control mb-2"
+                                                        placeholder="Enter Technology Name" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class=" form-label">Backend Technology</label>
+                                                    <input type="text" name="backend_technology"
+                                                        value="{{instance.backend_technology}}" class="form-control mb-2"
+                                                        placeholder="Enter Technology Name" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class=" form-label">Other Technology</label>
+                                                    <input type="text" name="other_technology"
+                                                        value="{{instance.other_technology}}" class="form-control mb-2"
+                                                        placeholder="Enter Technology Name" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Tab pane-->
+                    </div>
+                    <!--PROJECT TECHNOLOGY SECTION END-->
+
+
+                    <!--PROJECT Mode Of Functions SECTION-->
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="create-or-update-campaigns-general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
+                                <div class="card card-flush py-4">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Mode Of Functions</h2>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-0">
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">Description</label>
+                                                    <!-- Changed rows from 2 to 1 -->
+                                                    <textarea class="form-control mb-2" rows="1" id="id_content" name="project_mode_of_functions" placeholder="Enter The Project Functions">{{instance.project_mode_of_functions}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Tab pane-->
+                    </div>
+                    <!--PROJECT Mode Of Functions SECTION END-->
+
+                    <!--PROJECT The OutComes SECTION-->
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="create-or-update-campaigns-general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
+                                <div class="card card-flush py-4">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>The OutComes</h2>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-0 ">
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">Title</label>
+                                                    <input type="text" name="web_url_title"
+                                                        value="{{instance.web_url_title}}" class="form-control mb-2"
+                                                        placeholder="Enter The Title" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--PROJECT LIVE URL POINT SECTION-->
+<!--jahgshjgsadsahjdgashjdgsahdghg-->
+
+                                <!-- PROJECT OUT COMES SECTION-->
+
+                                <div id="outcomes">
+                                    <div class="form-group">
+                                        <div data-repeater-list="outcomes">
+                                            {% if project_out_comes  %}
+                                            {% for index in project_out_comes  %}
+                                            <div data-repeater-item>
+                                                <div class="form-group row ">
+                                                    <div class="col-md-8 pt-21" >
+                                                        <input type="text" name="name" value="{{index.title}}" class="form-control pb-2 mb-2 " placeholder="Enter Title" maxlength="250"/>
+                                                        <textarea class="form-control mb-2" rows="2" name="url" placeholder="Enter Url">{{index.url}}</textarea>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger">
+                                                            <i class="la la-trash-o"></i>Delete
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                            {% else %}
+                                            <div data-repeater-item>
+                                                <div class="form-group row ">
+                                                    <div class="col-md-8 pt-21">
+                                                        <input type="text" name="name" class="form-control mb-2 " placeholder="Enter Title" maxlength="250"/>
+                                                        <textarea class="form-control mb-2" rows="2" name="url" placeholder="Enter Url"></textarea>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger">
+                                                            <i class="la la-trash-o"></i>Delete
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <!--end::Form group-->
+                                    <!--begin::Form group-->
+                                    <div class="form-group mt-5 mb-5">
+                                        <a href="javascript:;" data-repeater-create class="btn btn-light-primary">
+                                            <i class="la la-plus"></i>Add
+                                        </a>
+                                    </div>
+                                    <!--end::Form group-->
+                                </div>
+
+                                <!-- PROJECT OUT COMES END SECTION-->
+
+
+<!--hjfshfhdsgfhdsgfdshgfdhsf-->
+                                        {% comment %} <div id="url_links">
+                                            <div class="form-group">
+                                                <label class=" required form-label">Urls:</label>
+                                                <div data-repeater-list="url_links">
+                                                    {% if project_live_urls  %}
+                                                    {% for index in project_live_urls  %}
+                                                    <div data-repeater-item>
+                                                        <div class="form-group row pt-21">
+                                                            <div class="col-md-8">
+                                                                <input type="url" name="name"value="{{index.Points}}"class="form-control mb-2 mb-md-0"placeholder="{{index.Points}}" />
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <a href="javascript:;" data-repeater-delete
+                                                                    class="btn btn-sm btn-light-danger ">
+                                                                    <i class="la la-trash-o"></i>Delete
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                    {% else %}
+                                                    <div data-repeater-item>
+                                                        <div class="form-group row pt-21">
+                                                            <div class="col-md-8">
+                                                                <input type="text" name="name"
+                                                                    class="form-control mb-2 mb-md-0"
+                                                                    placeholder="Add Points" />
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <a href="javascript:;" data-repeater-delete
+                                                                    class="btn btn-sm btn-light-danger ">
+                                                                    <i class="la la-trash-o"></i>Delete
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                <!--end::Form group-->
+                                                <!--begin::Form group-->
+                                                <div class="form-group mt-5 mb-5">
+                                                    <a href="javascript:;" data-repeater-create
+                                                        class="btn btn-light-primary">
+                                                        <i class="la la-plus"></i>Add
+                                                    </a>
+                                                </div>
+                                                <!--end::Form group-->
+                                            </div>
+                                        </div> {% endcomment %}
+
+                                        <!--PROJECT LIVE URL POINT END SECTION-->
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Tab pane-->
+                    </div>
+                    <!--PROJECT The OutComes SECTION END-->
+
+                    <!--PROJECT The SEO SECTION-->
+                    <div class="tab-content">
+                        <!--begin::Tab pane-->
+                        <div class="tab-pane fade show active" id="create-or-update-campaigns-general" role="tab-panel">
+                            <div class="d-flex flex-column gap-7 gap-lg-10">
+                                <div class="card card-flush py-4">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <h2>Seo</h2>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pt-0 ">
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Meta Title</label>
+                                                    <input type="text" name="meta_title" value="{{instance.meta_title}}"
+                                                        class="form-control mb-2" placeholder="Enter Meta Title" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Meta Description</label>
+                                                    <input type="text" name="meta_description" value="{{instance.meta_description}}"
+                                                        class="form-control mb-2" placeholder="Enter Meta Description" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Meta Keywords</label>
+                                                    <span style="color: red;padding: 10px;">(seperated by , )</span>
+                                                    <textarea class="form-control mb-2" rows="4" id="notification_title" name="meta_keyword"
+                                                        placeholder="Enter Meta Keywords">{{instance.meta_keyword}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="required form-label">Image Title</label>
+                                                    <input type="text" name="meta_image_title" value="{{instance.meta_image_title}}"
+                                                        class="form-control mb-2" placeholder="Enter Image Title" maxlength="250"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <label class="form-label">OG Image</label><br>
+                                                    <input type="file" name="og_image" id="logo" accept="image/*"
+                                                        class="form-control mb-2" onchange="ogimagepreviewImage(event)" />
+                                                </div>
+                                            </div>
+                                            <div class="fv-row w-100 flex-md-root">
+                                                <div class="mb-5 fv-row">
+                                                    <img id="og-image-logo-preview"
+                                                        src="{% if instance.og_image %}{{ instance.og_image.url }}{% else %}{% static 'assets/media/svg/files/blank-image.svg' %}{% endif %}"
+                                                        alt="Logo Preview" class="img-fluid" style="width: 160px;
+                                                height: 70px;" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Tab pane-->
+                    </div>
+                    <!--PROJECT SEO SECTION-->
+
+                    <!--end::Tab content-->
+                    <div class="d-flex justify-content-end">
+                        <!--begin::Button-->
+                        <a href="{% url 'projects:project-case-study.listing' %}" id="kt_ecommerce_add_product_cancel"
+                            class="btn btn-light me-5">Cancel</a>
+                        <!--end::Button-->
+                        <!--begin::Button-->
+                        <button type="submit" id="create-or-update-campaigns-submit" class="btn btn-primary">
+                        <span class="indicator-label" >Save </span>
+                        </button>
+                        <button type="button" id="banner-loader-text" class="indicator-progress btn btn-primary">
+                        <span class="">Please wait...
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                        </button>
+                            
+                            
+                        <!--end::Button-->
+                    </div>
+                </div>
+                <!--end::Main column-->
+            </form>
+            <!--end::Form-->
+        </div>
+        <!--end::Content container-->
+    </div>
+    <!--end::Content-->
+</div>
+<!--end::Content wrapper-->
+
+{% endblock content %}
+
+
+
+
+{% block script %}
+
+<script>
+
+    var api_config = {
+        "campaign_image_upload_api_url"   : "{% url 'projects:project-case-study.image.upload' %}",
+        "uuid"                            : "{{uuid}}",
+        "csrfmiddlewaretoken"             : "{{ csrf_token }}",
+        "get_campaign_images_api_url"     : "{% url 'projects:get.project-case-study.images' %}",
+        "temporary_image_destroy_api_url" : "{% url 'projects:temporary.image.destroy' %}",
+        "campaign_id"                     : "{{instance.id}}",
+        "validation"                      : "{% url 'projects:validation.project-case-study' %}",
+    }
+
+</script>
+
+<script src="//cdn.ckeditor.com/4.20.2/standard/ckeditor.js"></script>
+
+<script>
+    if (typeof CKEDITOR !== 'undefined') {
+
+        CKEDITOR.replace('id_content', {
+            height: 200, // Set the height of the editor to 300 pixels
+            toolbar: [
+                { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'] },
+                { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl'] },
+                { name: 'links', items: ['Link', 'Unlink', 'Anchor'] },
+                { name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize'] },
+                { name: 'colors', items: ['TextColor', 'BGColor'] },
+                { name: 'tools', items: ['Maximize', 'ShowBlocks', '-',] }
+                
+            ]
+        });
+    }
+
+</script>
+
+<script>
+
+    $('input[name="url"]').on('keyup', function() {
+        // Get the value from the input field
+        var inputValue = $(this).val();
+        var casestudyId = $('#casestudy_id').val();
+        
+        // Create the data object to send in the AJAX request
+        var postData = {
+            url: inputValue,
+            casestudy_id: casestudyId
+        };
+    
+        // Cache the Save button element
+        var saveButton = $('#create-or-update-campaigns-submit');
+    
+        // Make the AJAX POST request
+        $.ajax({
+            type: "POST",
+            url: api_config.validation, // Use the 'validation' URL from api_config
+            data: postData,
+            success: function(response) {
+                // Handle the successful response here
+                console.log("AJAX request successful:", response);
+    
+                // Check if the response indicates a duplicate URL
+                if (response.status_code === 100 && response.message === 'Url Already Exist') {
+                    // Display the error message
+                    $('.error-message').text('Duplicate Value Not Allowed');
+                    // Hide the Save button
+                    saveButton.hide();
+                    // Disable form submission
+                    $('form').on('submit', function(event) {
+                        event.preventDefault();
+                    });
+                } else {
+                    // Clear the error message, show the Save button, and enable form submission
+                    $('.error-message').text('');
+                    saveButton.show();
+                    $('form').off('submit');
+                }
+            },
+            error: function(error) {
+                // Handle any errors here
+                console.error("AJAX request error:", error);
+            }
+        });
+    });
+    
+    
+    // Check if err_message input field has a non-empty value
+    var errMessageInput = document.getElementById('err_message');
+    if (errMessageInput && errMessageInput.value.trim() !== '') {
+        // Display a toastr error message for 3 seconds
+        toastr.error(errMessageInput.value, '', { timeOut: 1000 });
+    }
+
+</script>
+
+
+<script
+    src="{% static 'assets/js/custom/pages/home-page/our-projects/project-case-study/create-or-update-project-case-study.js' %}?time={% now 'h:i:s' %}"></script>
+
+{% endblock script %}

@@ -1,0 +1,134 @@
+{% extends 'admin/layouts/apps.html' %}
+{% load static %}
+
+
+{% block content %}
+
+	<!--begin::Content wrapper-->
+    <div class="d-flex flex-column flex-column-fluid">
+        
+        
+
+        {% include 'admin/layouts/breadcrumbs.html' %}
+
+
+
+
+        <!--begin::Content-->
+        <div id="kt_app_content" class="app-content flex-column-fluid">
+            <!--begin::Content container-->
+            <div id="kt_app_content_container" class="app-container container-xxl">
+                <!--begin::Form-->
+                <form id="create-or-update-task_management-form" class="form d-flex flex-column flex-lg-row"  method="POST" enctype="multipart/form-data"  action="">
+                    {% csrf_token %}
+                    <!--begin::Aside column-->
+                    
+                    <!--end::Aside column-->
+                    <!--begin::Main column-->
+                    <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
+                        <!--begin:::Tabs-->
+                        <!--end:::Tabs-->
+                        <!--begin::Tab content-->
+                        <div class="tab-content">
+                            <!--begin::Tab pane-->
+                            <div class="tab-pane fade show active" id="create-or-update-product-general" role="tab-panel">
+                                <div class="d-flex flex-column gap-7 gap-lg-10">
+    
+                                    
+                                    <div class="card card-flush py-4">
+                                        
+                                        <div class="card-header">
+                                            <div class="card-title">
+                                                <h2>Task Management details</h2>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="task_management_id" value="{{task_management.id}}" />
+                                        <div class="card-body pt-0 ">
+    
+                                            <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                                <div class="fv-row w-100 flex-md-root">
+                                                    <div class="mb-5 fv-row">
+                                                        <label class="required form-label">Task Name</label>
+                                                        <input type="text" name="task_name" value="{{ task_management.task_name }}" class="form-control mb-2"  placeholder="Enter task name" />
+                                                    </div>
+                                                </div>
+                                                <div class="fv-row w-100 flex-md-root">
+                                                    <div class="mb-5 fv-row">
+                                                        <label class="form-label required">Task Description</label>
+                                                        <textarea id="address"  class="form-control" name="task_description"  placeholder="Enter task description">{{task_management.task_description | safe}}</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                                <div class="fv-row w-100 flex-md-root">
+                                                    <div class="mb-3 fv-row">
+                                                        <label class="form-label">Category Name</label>
+                                                        <input type="text" name="category_name" value="{{task_management.category_name}}" class="form-control mb-2"  placeholder="Enter category name" />
+                                                        </div>
+                                                </div>
+                                                <div class="fv-row w-100 flex-md-root">
+                                                    <div class="mb-5 fv-row">
+                                                        <label class="required form-label">Star Date</label>
+                                                        <input type="date" id="start_date" placeholder="yyyy-mm-dd" name="start_date" data-control-input="start_date" onfocus="this.showPicker()" value="{{task_management.start_date|date:'Y-m-d'}}" class="form-control mb-2"> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex mb-10 flex-wrap gap-5 mt-10">
+                                                <div class="fv-row w-100 flex-md-root">
+                                                    <div class="mb-5 fv-row">
+                                                        <label class="required form-label">End Date</label>
+                                                        <input type="date" id="end_date" placeholder="yyyy-mm-dd" name="end_date" data-control-input="start_date" onfocus="this.showPicker()" value="{{task_management.end_date |date:'Y-m-d' }}" class="form-control mb-2"> 
+                                                    </div>
+                                                </div>
+                                                <div class="fv-row w-100 flex-md-root">
+                                                    <div class="mb-5 fv-row">
+                                                        <input type="hidden" name="" value="{{customer.post_code}}" class="form-control mb-2"  placeholder="Enter post code"  onkeypress="if  (!/^[0-9]*\.?[0-9]*$/.test(String.fromCharCode(event.which))) return false;"  />
+                                                    </div>
+                                                </div>
+                                            </div>
+                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Tab pane-->
+                        </div>
+                        <!--end::Tab content-->
+                        <div class="d-flex justify-content-end">
+                            <!--begin::Button-->
+                            <a href="" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">Cancel</a>
+                            <!--end::Button-->
+                            <!--begin::Button-->
+                            <button type="submit" id="create-or-update-task_management-submit" class="btn btn-primary">
+                                <span class="indicator-label">Save </span>
+                                <span class="indicator-progress">Please wait... 
+                                <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+                            </button>
+                            <!--end::Button-->
+                        </div>
+                    </div>
+                    <!--end::Main column-->
+                </form>
+                <!--end::Form-->
+            </div>
+            <!--end::Content container-->
+        </div>
+        <!--end::Content-->
+    </div>
+    <!--end::Content wrapper-->
+	
+{% endblock content %}
+
+ 
+
+{% block script %}
+
+
+
+<script src="{% static 'assets/js/custom/pages/master/task_management/create-or-update-task_management.js' %}?time={% now 'h:i:s' %}"></script>
+
+
+{% endblock script %}
